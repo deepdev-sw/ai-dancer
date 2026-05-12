@@ -2,6 +2,8 @@ import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QTabWidget, QWidget, 
                              QVBoxLayout, QLabel, QStatusBar, QSplitter)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+import os
 from database.database_manager import DatabaseManager
 from ui.video_tab import VideoTab
 from ui.model_tab import ModelTab
@@ -30,6 +32,10 @@ class MainWindow(QMainWindow):
     def init_ui(self):
         self.setWindowTitle('AI换衣视频生成软件')
         self.setGeometry(100, 100, 1200, 800)
+        
+        icon_path = os.path.join(os.path.dirname(__file__), '..', 'app_icon.png')
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
         
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
