@@ -43,9 +43,9 @@ class VolcEngineImageToVideoGenerator(BaseImageToVideoGenerator):
             })
         
         resolution_map = {
-            '480p': '480P',
-            '720p': '720P',
-            '1080p': '1080P'
+            '480p': '480p',
+            '720p': '720p',
+            '1080p': '1080p'
         }
         
         try:
