@@ -1,13 +1,12 @@
+import sys
+import subprocess
+import traceback
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
                              QLineEdit, QTableWidget, QTableWidgetItem, 
-                             QFileDialog, QMessageBox, QHeaderView, QDialog)
+                             QFileDialog, QMessageBox, QHeaderView)
 from PyQt5.QtGui import QIcon
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import QUrl
 from utils.file_manager import save_video_file, delete_file, get_file_size
 from utils.constants import ALLOWED_VIDEO_EXTENSIONS
-import traceback
 
 class VideoTab(QWidget):
     def __init__(self, db_manager):
@@ -175,50 +174,15 @@ class VideoTab(QWidget):
                 QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def play_video(self, video_path):
-        dialog = QDialog()
-        dialog.setWindowTitle('视频播放')
-        dialog.setMinimumSize(800, 600)
-        dialog_layout = QVBoxLayout(dialog)
+        import os
         
-        video_widget = QVideoWidget()
-        media_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        media_player.setVideoOutput(video_widget)
-        media_player.setMedia(QMediaContent(QUrl.fromLocalFile(video_path)))
-        
-        control_layout = QHBoxLayout()
-        play_btn = QPushButton('播放')
-        pause_btn = QPushButton('暂停')
-        stop_btn = QPushButton('停止')
-        close_btn = QPushButton('关闭')
-        
-        def play():
-            media_player.play()
-        
-        def pause():
-            media_player.pause()
-        
-        def stop():
-            media_player.stop()
-        
-        def close_dialog():
-            media_player.stop()
-            dialog.close()
-        
-        def on_dialog_finished():
-            media_player.stop()
-        
-        play_btn.clicked.connect(play)
-        pause_btn.clicked.connect(pause)
-        stop_btn.clicked.connect(stop)
-        close_btn.clicked.connect(close_dialog)
-        dialog.finished.connect(on_dialog_finished)
-        
-        control_layout.addWidget(play_btn)
-        control_layout.addWidget(pause_btn)
-        control_layout.addWidget(stop_btn)
-        control_layout.addWidget(close_btn)
-        
-        dialog_layout.addWidget(video_widget)
-        dialog_layout.addLayout(control_layout)
-        
-        dialog.exec_()
+        try:
+            if os.name == 'nt':
+                os.startfile(video_path)
+            elif os.name == 'posix':
+                if sys.platform == 'darwin':
+                    subprocess.run(['open', video_path])
+                else:
+                    subprocess.run(['xdg-open', video_path])
+        except Exception as e:
+            QMessageBox.warning(self, '播放失败', f'无法打开视频文件: {str(e)}')
