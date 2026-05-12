@@ -139,12 +139,18 @@ class ImageToVideoConfigEditDialog(QDialog):
         layout.addWidget(QLabel('提示词:'))
         layout.addWidget(self.prompt_input)
         
+        self.resolution_combo = QComboBox()
+        self.resolution_combo.addItems(['480p', '720p', '1080p'])
+        layout.addWidget(QLabel('视频分辨率:'))
+        layout.addWidget(self.resolution_combo)
+        
         if config_content:
             try:
                 data = json.loads(config_content)
                 self.api_key_input.setText(data.get('apiKey', ''))
                 self.model_id_input.setText(data.get('modelId', ''))
                 self.prompt_input.setText(data.get('prompt', ''))
+                self.resolution_combo.setCurrentText(data.get('resolution', '720p'))
             except:
                 pass
         
@@ -163,7 +169,8 @@ class ImageToVideoConfigEditDialog(QDialog):
         config = {
             "apiKey": self.api_key_input.text().strip(),
             "modelId": self.model_id_input.text().strip(),
-            "prompt": self.prompt_input.toPlainText().strip()
+            "prompt": self.prompt_input.toPlainText().strip(),
+            "resolution": self.resolution_combo.currentText()
         }
         return json.dumps(config, indent=2, ensure_ascii=False)
     

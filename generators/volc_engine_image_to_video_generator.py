@@ -17,6 +17,7 @@ class VolcEngineImageToVideoGenerator(BaseImageToVideoGenerator):
         api_key = config_content.get('apiKey')
         model_id = config_content.get('modelId')
         prompt = config_content.get('prompt')
+        resolution = config_content.get('resolution', '720p')
         
         if not api_key:
             return {'success': False, 'error_message': '配置中缺少api_key'}
@@ -41,10 +42,17 @@ class VolcEngineImageToVideoGenerator(BaseImageToVideoGenerator):
                 }
             })
         
+        resolution_map = {
+            '480p': '480P',
+            '720p': '720P',
+            '1080p': '1080P'
+        }
+        
         try:
             create_result = client.content_generation.tasks.create(
                 model=model_id,
-                content=content
+                content=content,
+                resolution=resolution_map.get(resolution, '720P')
             )
             # 打印create_result
             print(create_result)
