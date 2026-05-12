@@ -3,6 +3,7 @@ import time
 import httpx
 from .base_image_to_video_generator import BaseImageToVideoGenerator
 from models.image_to_video_gen_config import ImageToVideoGenConfig
+from utils.log_manager import log_manager
 
 class VolcEngineImageToVideoGenerator(BaseImageToVideoGenerator):
     def generate_video(self, config, image_path):
@@ -55,7 +56,7 @@ class VolcEngineImageToVideoGenerator(BaseImageToVideoGenerator):
                 resolution=resolution_map.get(resolution, '720P')
             )
             # 打印create_result
-            print(create_result)
+            log_manager.info(f"create_result: {create_result}")
             
             if create_result and hasattr(create_result, 'id'):
                 return {
@@ -103,7 +104,7 @@ class VolcEngineImageToVideoGenerator(BaseImageToVideoGenerator):
             
             get_result = client.content_generation.tasks.get(task_id=task_id)
             # 打印get_result
-            print(get_result)
+            log_manager.info(f"get_result: {get_result}")
             
             status = get_result.status
             
