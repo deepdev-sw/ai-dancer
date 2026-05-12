@@ -27,7 +27,7 @@ jobs:
     
     - name: Build with PyInstaller
       run: |
-        pyinstaller -F -w --name="ai-dancer" --icon=app_icon.ico main.py
+        pyinstaller -F -w --name="ai-dancer"  main.py
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
