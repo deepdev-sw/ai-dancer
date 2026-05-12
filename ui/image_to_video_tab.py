@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
                              QTableWidget, QTableWidgetItem, QMessageBox, 
-                             QHeaderView, QDialog)
+                             QHeaderView, QDialog, QLabel, QApplication)
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
+from PyQt5.QtGui import QCursor
 import os
 import traceback
 
@@ -37,7 +38,13 @@ class ImageToVideoTab(QWidget):
         for item in image_to_videos:
             row = self.table.rowCount()
             self.table.insertRow(row)
-            self.table.setItem(row, 0, QTableWidgetItem(item['video_path']))
+            
+            path_label = QLabel(item['video_path'])
+            path_label.setStyleSheet('color: blue; text-decoration: underline;')
+            path_label.setCursor(QCursor(Qt.PointingHandCursor))
+            path_label.mousePressEvent = lambda _, p=item['video_path']: self.copy_path(p)
+            self.table.setCellWidget(row, 0, path_label)
+            
             self.table.setItem(row, 1, QTableWidgetItem(item['config_name'] or '未知'))
             
             view_btn = QPushButton('查看视频')
@@ -54,6 +61,11 @@ class ImageToVideoTab(QWidget):
             self.table.setCellWidget(row, 2, btn_widget)
             
             self.table.setCellWidget(row, 3, delete_btn)
+    
+    def copy_path(self, path):
+        clipboard = QApplication.clipboard()
+        clipboard.setText(path)
+        QMessageBox.information(self, '成功', '路径已复制到剪贴板')
     
     def play_video(self, video_path):
         if not os.path.exists(video_path):

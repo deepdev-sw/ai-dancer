@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
                              QTableWidget, QTableWidgetItem, QComboBox,
-                             QHeaderView, QMessageBox, QDialog)
+                             QHeaderView, QMessageBox, QDialog, QLabel, QApplication)
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
+from PyQt5.QtGui import QCursor
 from models.image_to_video_gen_task import ImageToVideoGenTask
 from ui.image_to_video_gen_dialog import ImageToVideoGenDialog
 
@@ -84,7 +85,15 @@ class ImageToVideoGenTaskTab(QWidget):
             
             self.table.setItem(row, 6, QTableWidgetItem(task.get('result_desc', '')))
             
-            self.table.setItem(row, 7, QTableWidgetItem(task.get('output_video_path', '')))
+            video_path = task.get('output_video_path', '')
+            if video_path:
+                path_label = QLabel(video_path)
+                path_label.setStyleSheet('color: blue; text-decoration: underline;')
+                path_label.setCursor(QCursor(Qt.PointingHandCursor))
+                path_label.mousePressEvent = lambda _, p=video_path: self.copy_path(p)
+                self.table.setCellWidget(row, 7, path_label)
+            else:
+                self.table.setItem(row, 7, QTableWidgetItem(''))
             
             view_btn = QPushButton('查看图生视频')
             view_btn.clicked.connect(lambda checked, t=task: self.view_video(t))
@@ -98,6 +107,11 @@ class ImageToVideoGenTaskTab(QWidget):
             
             self.table.setItem(row, 10, QTableWidgetItem(str(task['id'])))
             self.table.setColumnHidden(10, True)
+    
+    def copy_path(self, path):
+        clipboard = QApplication.clipboard()
+        clipboard.setText(path)
+        QMessageBox.information(self, '成功', '路径已复制到剪贴板')
     
     def _get_status_display(self, status):
         status_map = {
