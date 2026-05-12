@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QTabWidget, QWidget, 
-                             QVBoxLayout, QLabel, QStatusBar)
+                             QVBoxLayout, QLabel, QStatusBar, QSplitter)
+from PyQt5.QtCore import Qt
 from database.database_manager import DatabaseManager
 from ui.video_tab import VideoTab
 from ui.model_tab import ModelTab
@@ -16,6 +17,7 @@ from ui.video_gen_task_tab import VideoGenTaskTab
 from ui.ai_dance_video_gen_task_tab import AiDanceVideoGenTaskTab
 from ui.image_to_video_tab import ImageToVideoTab
 from ui.image_to_video_gen_task_tab import ImageToVideoGenTaskTab
+from ui.log_widget import LogWidget
 from utils.task_recovery import TaskRecovery
 
 class MainWindow(QMainWindow):
@@ -32,6 +34,9 @@ class MainWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
+        
+        self.splitter = QSplitter()
+        self.splitter.setOrientation(Qt.Vertical)
         
         self.tab_widget = QTabWidget()
         
@@ -65,7 +70,13 @@ class MainWindow(QMainWindow):
         self.tab_widget.addTab(self.ai_dance_video_gen_task_tab, 'AI跳舞视频生成任务')
         self.tab_widget.addTab(self.image_to_video_gen_task_tab, '图生视频生成任务')
         
-        self.layout.addWidget(self.tab_widget)
+        self.log_widget = LogWidget()
+        
+        self.splitter.addWidget(self.tab_widget)
+        self.splitter.addWidget(self.log_widget)
+        self.splitter.setSizes([800, 200])
+        
+        self.layout.addWidget(self.splitter)
         
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
