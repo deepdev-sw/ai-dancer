@@ -53,11 +53,16 @@ class ImageToVideoGenConfigTab(QWidget):
             edit_btn.clicked.connect(lambda _, cid=config['id'], name=config['name'], 
                                    ctype=config['config_type'], content=config['config_content']: 
                                    self.edit_config(cid, name, ctype, content))
+            copy_btn = QPushButton('复制')
+            copy_btn.clicked.connect(lambda _, name=config['name'], 
+                                   ctype=config['config_type'], content=config['config_content']: 
+                                   self.copy_config(name, ctype, content))
             delete_btn = QPushButton('删除')
             delete_btn.clicked.connect(lambda _, cid=config['id']: self.delete_config(cid))
             
             btn_layout = QHBoxLayout()
             btn_layout.addWidget(edit_btn)
+            btn_layout.addWidget(copy_btn)
             btn_layout.addWidget(delete_btn)
             btn_widget = QWidget()
             btn_widget.setLayout(btn_layout)
@@ -91,6 +96,19 @@ class ImageToVideoGenConfigTab(QWidget):
                 QMessageBox.information(self, '成功', '配置更新成功')
             except Exception as e:
                 QMessageBox.critical(self, '错误', f'更新失败: {str(e)}\n\n{traceback.format_exc()}')
+    
+    def copy_config(self, name, config_type, config_content):
+        dialog = ImageToVideoConfigEditDialog(self, name=name + '_副本', config_type=config_type, config_content=config_content)
+        dialog.setWindowTitle('复制图生视频配置')
+        dialog.name_input.setReadOnly(False)
+        if dialog.exec_() == QDialog.Accepted:
+            try:
+                self.db_manager.add_image_to_video_gen_config(dialog.name_input.text().strip(), 
+                                                          config_type, dialog.get_config_content())
+                self.load_data()
+                QMessageBox.information(self, '成功', '配置复制成功')
+            except Exception as e:
+                QMessageBox.critical(self, '错误', f'复制失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def delete_config(self, config_id):
         reply = QMessageBox.question(
