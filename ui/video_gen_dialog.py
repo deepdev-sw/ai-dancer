@@ -4,7 +4,8 @@ from PyQt5.QtCore import QTimer
 from models.video_gen_config import VideoGenConfig
 from generators import get_video_generator
 from models.video_gen_task import VideoGenTask
-from utils.file_manager import save_video_file
+from utils.file_manager import generate_unique_filename
+from utils.constants import VIDEO_DIR
 import httpx
 import os
 import traceback
@@ -130,12 +131,10 @@ class VideoGenDialog(QDialog):
                     result_url = status_result.get('result_url')
                     if result_url:
                         video_data = httpx.get(result_url).content
-                        temp_path = os.path.join('/tmp', f'temp_video_{external_task_id}.mp4')
-                        with open(temp_path, 'wb') as f:
+                        filename = generate_unique_filename(f'video_{external_task_id}.mp4')
+                        saved_path = os.path.join(VIDEO_DIR, filename)
+                        with open(saved_path, 'wb') as f:
                             f.write(video_data)
-                        
-                        saved_path = save_video_file(temp_path)
-                        os.remove(temp_path)
                         
                         new_video_id = self.db_manager.add_new_video(
                             video_id,

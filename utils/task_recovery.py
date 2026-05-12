@@ -4,7 +4,8 @@ from models.image_to_video_gen_config import ImageToVideoGenConfig
 from models.image_gen_config import ImageGenConfig
 from models.model_gen_config import ModelGenConfig
 from generators import get_generator, get_model_generator, get_image_to_video_generator
-from utils.file_manager import download_image, save_video_file
+from utils.file_manager import download_image, generate_unique_filename
+from utils.constants import VIDEO_DIR
 from database.database_manager import DatabaseManager
 import httpx
 import os
@@ -202,12 +203,10 @@ class ImageToVideoTaskRecoveryProcessor(QThread):
         result_url = status_result.get('result_url')
         if result_url:
             video_data = httpx.get(result_url).content
-            temp_path = os.path.join('/tmp', f'temp_video_{self.task_data.get("external_task_id")}.mp4')
-            with open(temp_path, 'wb') as f:
+            filename = generate_unique_filename(f'video_{self.task_data.get("external_task_id")}.mp4')
+            saved_path = os.path.join(VIDEO_DIR, filename)
+            with open(saved_path, 'wb') as f:
                 f.write(video_data)
-            
-            saved_path = save_video_file(temp_path)
-            os.remove(temp_path)
             
             image_to_video_id = self.local_db_manager.add_image_to_video(
                 image_to_video_gen_config_id=video_gen_config.id,
