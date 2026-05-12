@@ -4,6 +4,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from utils.file_manager import delete_file
+import traceback
 
 class NewVideoTab(QWidget):
     def __init__(self, db_manager):
@@ -113,4 +114,4 @@ class NewVideoTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '生成视频删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')

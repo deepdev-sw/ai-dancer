@@ -8,6 +8,7 @@ from utils.file_manager import delete_file, download_image
 from models.model_gen_config import ModelGenConfig
 from generators.model_volc_engine_generator import VolcEngineModelGenerator
 import os
+import traceback
 
 class AiClothesTab(QWidget):
     def __init__(self, db_manager):
@@ -98,7 +99,7 @@ class AiClothesTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', 'AI处理衣服删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def open_generate_dialog(self, ai_clothes_id, clothes_id, clothes_image_path):
         dialog = GenerateModelImageDialog(self, ai_clothes_id, clothes_id, clothes_image_path, self.db_manager)
@@ -246,7 +247,7 @@ class GenerateModelImageDialog(QDialog):
             else:
                 QMessageBox.warning(self, '警告', '无法加载生成的图片')
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'下载图片失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'下载图片失败: {str(e)}\n\n{traceback.format_exc()}')
         
         self.generate_btn.setEnabled(True)
     
@@ -270,7 +271,7 @@ class GenerateModelImageDialog(QDialog):
             QMessageBox.information(self, '成功', '新模特图片保存成功')
             self.accept()
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'保存失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'保存失败: {str(e)}\n\n{traceback.format_exc()}')
 
 class GenerateImageWorker(QThread):
     finished = pyqtSignal(str)
@@ -295,4 +296,4 @@ class GenerateImageWorker(QThread):
             
             self.finished.emit(image_url)
         except Exception as e:
-            self.error.emit(str(e))
+            self.error.emit(f'{str(e)}\n\n{traceback.format_exc()}')

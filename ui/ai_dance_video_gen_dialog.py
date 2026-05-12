@@ -10,6 +10,7 @@ from utils.file_manager import download_image, save_video_file
 from database.database_manager import DatabaseManager
 import httpx
 import os
+import traceback
 
 class TaskProcessor(QThread):
     task_finished = pyqtSignal()
@@ -26,7 +27,7 @@ class TaskProcessor(QThread):
             self.local_db_manager = DatabaseManager()
             self._process_clothes()
         except Exception as e:
-            self._handle_error(f'任务处理失败: {str(e)}')
+            self._handle_error(f'任务处理失败: {str(e)}\n\n{traceback.format_exc()}')
         finally:
             if self.local_db_manager:
                 self.local_db_manager.close()
@@ -170,7 +171,7 @@ class TaskProcessor(QThread):
                     result_desc=error_msg
                 )
         except Exception as e:
-            print(f'更新任务状态失败: {str(e)}')
+            print(f'更新任务状态失败: {str(e)}\n\n{traceback.format_exc()}')
         self.task_failed.emit(error_msg)
 
 class AiDanceVideoGenDialog(QDialog):

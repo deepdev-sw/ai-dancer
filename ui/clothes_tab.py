@@ -11,6 +11,7 @@ from generators import get_generator
 import urllib.request
 import tempfile
 import os
+import traceback
 
 class ImagePreviewDialog(QDialog):
     def __init__(self, image_url, parent=None):
@@ -53,7 +54,7 @@ class ImagePreviewDialog(QDialog):
             pixmap.loadFromData(data)
             self.image_label.setPixmap(pixmap.scaled(550, 400, aspectRatioMode=True))
         except Exception as e:
-            self.image_label.setText(f'加载图片失败: {str(e)}')
+            self.image_label.setText(f'加载图片失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def on_ok(self):
         self.accepted_flag = True
@@ -126,7 +127,7 @@ class ClothesTab(QWidget):
             self.load_data()
             QMessageBox.information(self, '成功', '衣服图片添加成功')
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'添加失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'添加失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def generate_new_clothes_image(self, clothes_id, clothes_name, image_path):
         self.open_generate_clothes_dialog(clothes_id, clothes_name, image_path)
@@ -138,7 +139,7 @@ class ClothesTab(QWidget):
                 f.write(data)
                 return f.name
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'下载图片失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'下载图片失败: {str(e)}\n\n{traceback.format_exc()}')
             return None
     
     def load_data(self):
@@ -219,7 +220,7 @@ class ClothesTab(QWidget):
                 dialog.close()
                 QMessageBox.information(self, '成功', '衣服图片更新成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'更新失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'更新失败: {str(e)}\n\n{traceback.format_exc()}')
         
         browse_btn.clicked.connect(browse_new)
         save_btn.clicked.connect(save)
@@ -244,7 +245,7 @@ class ClothesTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '衣服图片删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def view_image(self, image_path):
         dialog = QDialog()
@@ -384,7 +385,7 @@ class GenerateClothesImageDialog(QDialog):
             else:
                 QMessageBox.warning(self, '警告', '无法加载生成的图片')
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'下载图片失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'下载图片失败: {str(e)}\n\n{traceback.format_exc()}')
         
         self.generate_btn.setEnabled(True)
     
@@ -405,7 +406,7 @@ class GenerateClothesImageDialog(QDialog):
             QMessageBox.information(self, '成功', '新衣服图片生成并保存成功')
             self.accept()
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'保存失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'保存失败: {str(e)}\n\n{traceback.format_exc()}')
 
 class GenerateClothesWorker(QThread):
     finished = pyqtSignal(str)
@@ -430,4 +431,4 @@ class GenerateClothesWorker(QThread):
             
             self.finished.emit(image_url)
         except Exception as e:
-            self.error.emit(str(e))
+            self.error.emit(f'{str(e)}\n\n{traceback.format_exc()}')

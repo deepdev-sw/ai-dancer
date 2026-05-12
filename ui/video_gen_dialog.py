@@ -7,6 +7,7 @@ from models.video_gen_task import VideoGenTask
 from utils.file_manager import save_video_file
 import httpx
 import os
+import traceback
 
 class VideoGenDialog(QDialog):
     def __init__(self, parent=None, db_manager=None, dressed_model_id=None):
@@ -106,7 +107,7 @@ class VideoGenDialog(QDialog):
                 QMessageBox.critical(self, '错误', f'提交失败: {error_msg}')
         
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'生成视频失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'生成视频失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def _poll_task_status(self, local_task_id, external_task_id, generator, 
                           config_id, video_id):

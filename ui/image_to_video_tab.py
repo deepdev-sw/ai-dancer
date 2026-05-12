@@ -5,6 +5,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import QUrl
 import os
+import traceback
 
 class ImageToVideoTab(QWidget):
     def __init__(self, db_manager):
@@ -120,4 +121,4 @@ class ImageToVideoTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '图生视频删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')

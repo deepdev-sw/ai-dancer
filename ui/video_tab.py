@@ -7,6 +7,7 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import QUrl
 from utils.file_manager import save_video_file, delete_file, get_file_size
 from utils.constants import ALLOWED_VIDEO_EXTENSIONS
+import traceback
 
 class VideoTab(QWidget):
     def __init__(self, db_manager):
@@ -75,7 +76,7 @@ class VideoTab(QWidget):
             self.load_data()
             QMessageBox.information(self, '成功', '视频添加成功')
         except Exception as e:
-            QMessageBox.critical(self, '错误', f'添加失败: {str(e)}')
+            QMessageBox.critical(self, '错误', f'添加失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def load_data(self):
         self.table.setRowCount(0)
@@ -146,7 +147,7 @@ class VideoTab(QWidget):
                 dialog.close()
                 QMessageBox.information(self, '成功', '视频更新成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'更新失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'更新失败: {str(e)}\n\n{traceback.format_exc()}')
         
         browse_btn.clicked.connect(browse_new)
         save_btn.clicked.connect(save)
@@ -171,7 +172,7 @@ class VideoTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '视频删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def play_video(self, video_path):
         dialog = QDialog()

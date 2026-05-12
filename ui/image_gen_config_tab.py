@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QComboBox, QMessageBox, QHeaderView, QDialog,
                              QLabel, QTextEdit)
 import json
+import traceback
 from models.image_gen_config import ImageGenConfig
 
 class ImageGenConfigTab(QWidget):
@@ -78,7 +79,7 @@ class ImageGenConfigTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '配置添加成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'添加失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'添加失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def edit_config(self, config_id, name, config_type, config_content):
         dialog = ConfigEditDialog(self, name=name, config_type=config_type, config_content=config_content)
@@ -89,7 +90,7 @@ class ImageGenConfigTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '配置更新成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'更新失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'更新失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def delete_config(self, config_id):
         reply = QMessageBox.question(
@@ -102,7 +103,7 @@ class ImageGenConfigTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '配置删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')
 
 class ConfigEditDialog(QDialog):
     def __init__(self, parent=None, name='', config_type='', config_content=''):

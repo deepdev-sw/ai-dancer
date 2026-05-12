@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
 from PyQt5.QtGui import QPixmap
 from utils.file_manager import delete_file
 from ui.video_gen_dialog import VideoGenDialog
+import traceback
 
 class DressedModelTab(QWidget):
     def __init__(self, db_manager):
@@ -92,7 +93,7 @@ class DressedModelTab(QWidget):
                 self.load_data()
                 QMessageBox.information(self, '成功', '穿新衣服模特删除成功')
             except Exception as e:
-                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}')
+                QMessageBox.critical(self, '错误', f'删除失败: {str(e)}\n\n{traceback.format_exc()}')
     
     def generate_video(self, dressed_model_id):
         dialog = VideoGenDialog(self, self.db_manager, dressed_model_id)
